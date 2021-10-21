@@ -181,6 +181,5 @@ class Calculadora:
     
     return pila_b.pop()
 
-
 arbolito = evaluar_expresion("( 2 - 6 ) * 3 + 5")
 arbolito.postOrden()   
