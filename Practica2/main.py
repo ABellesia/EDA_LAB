@@ -1,5 +1,5 @@
 
-#Definimoss la clase nodo
+#Definimos la clase nodo
 class Nodo:
     def __init__(self, dato=None):
         self.dato = dato
@@ -37,6 +37,13 @@ class Arbol_binario:
           self.cont = 1
   def size():
       return self.cont
+  def postOrden(nodo):
+    if nodo:
+      postOrden(nodo.getIzq())
+      postOrden(nodo.getDer())
+      print(nodo.getDato())
+
+    
 
 #Definimos la clase del árbol de expresión
 class Arbol_de_expresion(Arbol_binario):
@@ -56,7 +63,7 @@ class Arbol_de_expresion(Arbol_binario):
             self.raiz.set_hijo_izq(arbol_izq.get_raiz())
 
     def get_raiz():
-        return slef.raiz
+        return self.raiz
 
     def evalua_arbol():
         return evalua_nodo(self.raiz)
@@ -73,18 +80,24 @@ class Arbol_de_expresion(Arbol_binario):
             else:
                 res = temp.get_Dato()
         return res
-  def calcula_termino(operador, operando_1, operando_2):
-      res = 0
-      if operador == '+':
-          res = operando_1 + operando_2
-      elif operador == '-':
-          res = operando_1 - operando_2
-      elif operador == '*':
-          res = operando_1 * operando_2
-      else
-          res = operando_1 / operando_2
-      return res
+
   
+
+  def calcula_termino(operador, operando_1, operando_2):
+    res=0
+    if operador == '+':
+      res = operando_1 + operando_2
+      elif operador == '-':
+        res = operando_1 - operando_2
+      elif operador == '*':
+        res = operando_1 * operando_2
+        else
+          res = operando_1 / operando_2
+        return res
+        
+        
+
+
   def es_Operador(dato):
       operadores = ['+','-','*','/']
       if dato in operadores:
@@ -126,25 +139,48 @@ class Calculadora:
       return res
 
   def es_Operando(dato): 
-    try:
-      float(dato)
-      return True
-    except ValueError:
-      return False
+      try:
+          float(dato)
+          return True
+      except ValueError:
+          return False
   
-  def evaluar_expresion(): 
+  def jerarquia(signo):
+    if(signo == "+" or signo == "-"):
+      return 1
+    elif(signo == "*" or signo == "/"):
+      return 2
+    return 0
+  
+  def crear_arbol(pila_a, pila_b):
+    der = pila_b.pop()
+    izq = pila_b.pop()
+    pila_b.push(Arbol_de_expresion(pila_a.pop(), izq, der))
+
+
+  def evaluar_expresion(expresion): 
     pila_a = Pila()
     pila_b = Pila()
     tokens = self.expresion.split()
     while len(tokens) != 0:
       token = tokens.pop(0)
-      if es_Operando(token) 
-        pila_b.push(Arbol_de_expresion(float(token))
+      if es_Operando(token): 
+        pila_b.push(Arbol_de_expresion(float(token)))
       elif token == "(":
         pila_a.push(token)
-      elif token == "(":
-        
+      elif token == ")":
+        while(pila_a.peek() != "("):
+          crear_arbol(pila_a, pila_b)
+        pila_a.pop()
+      else: 
+        while(not pila_a.isEmpty() and pila_a.peek() != "(" and jerarquia(pila_a.peek()) >= jerarquia(token)):
+          crear_arbol(pila_a, pila_b)
 
-      
-        
+    while(not pila_a.isEmpty()):
+      crear_arbol(pila_a, pila_b)
     
+    return pila_b.pop()
+
+
+arbolito = evaluar_expresion("( 2 - 6 ) * 3 + 5")
+arbolito.postOrden()   
