@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Oct 20 19:36:17 2021
+Created on Fri Oct  8 12:54:41 2021
 
-@author: Diego Arellano
+@author: andyb
 """
 
 #Definimos la clase nodo
@@ -93,9 +93,7 @@ class Arbol_de_expresion:
             self.post_orden(nodo.get_hijo_izq())
             self.post_orden(nodo.get_hijo_der())
             print(nodo)
-            
-
-
+     
 class Pila: 
     def __init__(self):
         self.pila = []
@@ -157,10 +155,20 @@ class Calculadora:
             self.crear_arbol(pila_a, pila_b)
 
         arbol = pila_b.pop()
+        return arbol
         #print(arbol.get_arbol_izq().get_arbol_izq().get_arbol_der().get_raiz().get_dato())
-
+        
+    def calcula(self, arbol):
+        if arbol.get_raiz().get_dato() == '+':
+            return self.calcula(arbol.get_arbol_izq()) + self.calcula(arbol.get_arbol_der())
+        elif arbol.get_raiz().get_dato() == '-':
+            return self.calcula(arbol.get_arbol_izq()) - self.calcula(arbol.get_arbol_der())
+        elif arbol.get_raiz().get_dato() == '*':
+            return self.calcula(arbol.get_arbol_izq()) * self.calcula(arbol.get_arbol_der())
+        elif arbol.get_raiz().get_dato() == '/':
+            return self.calcula(arbol.get_arbol_izq()) / self.calcula(arbol.get_arbol_der())
+        else:
+            return arbol.get_raiz().get_dato()
 
 calcu = Calculadora()
-calcu.evaluar_expresion("( 2 - 6 ) * 3 + 5")
-
-
+calcu.calcula(calcu.evaluar_expresion("( 2 - 6 ) * 3 + 5"))
