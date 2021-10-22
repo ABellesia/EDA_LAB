@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Oct  8 12:54:41 2021
+Created on Wed Oct 20 19:36:17 2021
 
-@author: andyb
+@author: Diego Arellano
 """
 
-#Definimos la clase nodo
-#Definimos la clase nodo
 class Nodo:
     def __init__(self, dato=None):
         self.dato = dato
@@ -102,7 +100,9 @@ class Pila:
         self.pila.append(dato)
         
     def pop(self):
-        return self.pila.pop()
+        if(not self.is_empty()):
+            return self.pila.pop()
+        return SystemError
         
     def is_empty(self): 
         return len(self.pila) == 0
@@ -111,6 +111,35 @@ class Pila:
         return self.pila[-1]
         
 class Calculadora:
+    
+    def validar_operadores(self, expresion):
+        tokens = expresion.split()
+        i = 0
+        if(self.es_operador(tokens[0]) or self.es_operador(tokens[-1])):
+            return False
+        while(i < len(tokens)-1):
+            if(self.es_operador(tokens[i]) and self.es_operador(tokens[i+1])):
+                return False
+            else:
+                i+= 1
+        return True
+    
+    def validar_parentesis(self, expresion): 
+        pila = Pila()
+        tokens = expresion.split()
+        for token in tokens:
+            if(token == "("):
+                pila.push(token)
+            elif(token == ")"):
+                if(not pila.is_empty()):
+                    pila.pop()
+                else:
+                    return False
+            
+        return pila.is_empty()
+    
+    def es_operador(self, dato):
+        return dato in ["+", "-", "*", "/"]
     
     def es_operando(self, dato): 
         try:
@@ -133,6 +162,8 @@ class Calculadora:
 
 
     def evaluar_expresion(self, expresion): 
+        if(not self.validar_operadores(expresion) or not self.validar_parentesis(expresion)):
+            return "syntax ERROR" 
         pila_a = Pila()
         pila_b = Pila()
         tokens = expresion.split()
@@ -153,9 +184,13 @@ class Calculadora:
                     
         while(not pila_a.is_empty()):
             self.crear_arbol(pila_a, pila_b)
-
-        arbol = pila_b.pop()
-        return arbol
+            
+        if(not pila_b.is_empty()):
+            arbol = pila_b.pop()
+        else:
+            arbol = Arbol_de_expresion(0, None, None)
+            
+        return self.calcula(arbol)
         #print(arbol.get_arbol_izq().get_arbol_izq().get_arbol_der().get_raiz().get_dato())
         
     def calcula(self, arbol):
@@ -166,9 +201,13 @@ class Calculadora:
         elif arbol.get_raiz().get_dato() == '*':
             return self.calcula(arbol.get_arbol_izq()) * self.calcula(arbol.get_arbol_der())
         elif arbol.get_raiz().get_dato() == '/':
-            return self.calcula(arbol.get_arbol_izq()) / self.calcula(arbol.get_arbol_der())
+            try:
+                return self.calcula(arbol.get_arbol_izq()) / self.calcula(arbol.get_arbol_der())
+            except ZeroDivisionError:
+                return "Math ERROR"
         else:
             return arbol.get_raiz().get_dato()
 
 calcu = Calculadora()
-calcu.calcula(calcu.evaluar_expresion("( 2 - 6 ) * 3 + 5"))
+print(calcu.validar_parentesis("( ( ) ) )"))
+print(calcu.evaluar_expresion("3 / 0"))
