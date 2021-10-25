@@ -123,6 +123,13 @@ class Calculadora:
             else:
                 i+= 1
         return True
+
+    def validar_tokens(self, expresion): 
+        tokens = expresion.split()
+        for token in tokens:
+            if(not self.es_operador(token) and not self.es_operando(token) and not token in ["(", ")"]):
+                return False
+        return True
     
     def validar_parentesis(self, expresion): 
         pila = Pila()
@@ -162,7 +169,7 @@ class Calculadora:
 
 
     def evaluar_expresion(self, expresion): 
-        if(not self.validar_operadores(expresion) or not self.validar_parentesis(expresion)):
+        if(not self.validar_tokens(expresion) or not self.validar_operadores(expresion) or not self.validar_parentesis(expresion)):
             return "syntax ERROR" 
         pila_a = Pila()
         pila_b = Pila()
@@ -209,5 +216,17 @@ class Calculadora:
             return arbol.get_raiz().get_dato()
 
 calcu = Calculadora()
-print(calcu.validar_parentesis("( ( ) ) )"))
+print(calcu.evaluar_expresion("3+2+1"))
 print(calcu.evaluar_expresion("3 / 0"))
+print(calcu.evaluar_expresion("3 + 3 * ( 2 - -1 )"))
+
+''' No sé si la quieran poner pero se ve cool jsjasja
+calcu = Calculadora()
+print("Ingresa una expresión aritmética en notación infija")
+print("Para terminar ingresa t")
+print("Entre tokens debe haber un espacio")
+expresion = input()
+while(expresion != "t"):
+    print(expresion + " = " + str(calcu.evaluar_expresion(expresion)))
+    expresion = input()
+'''
