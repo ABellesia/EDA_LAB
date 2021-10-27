@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Oct 20 19:36:17 2021
 
@@ -33,39 +32,19 @@ class Nodo:
     def get_hijo_izq(self):
         return self.hijo_izq
     
-    def __str__(self):
-        cad = "" + str(self.dato)
-        return cad
 
 class Arbol_binario:
   def __init__(self, dato = None):
       self.raiz = Nodo(dato)
-      if dato == None: 
-          self.cont = 0
-      else: 
-          self.cont = 1
     
-    
-  def size(self):
-      return self.cont
-  
   def get_raiz(self):
       return self.raiz  
-
-  def post_ordenR(self):
-      self.post_orden(self.get_raiz())
-      
-  def post_orden(self, nodo):
-      if nodo:
-          self.post_orden(nodo.hijo_izq)
-          self.post_orden(nodo.hijo_der)
-          print(nodo.get_dato())
 
     
 
 #Definimos la clase del árbol de expresión
-class Arbol_de_expresion:
-    def __init__(self, dato, izq, der):
+class Arbol_de_expresion(Arbol_binario):
+    def __init__(self, dato, izq = None, der = None):
         self.raiz = Nodo(dato)
         self.izq = izq
         self.der = der
@@ -74,23 +53,13 @@ class Arbol_de_expresion:
         if self.der is not None:
             self.raiz.set_hijo_der(der)
             
-    def get_raiz(self):
-        return self.raiz  
-        
+            
     def get_arbol_izq(self):
         return self.izq
     
     def get_arbol_der(self):
         return self.der
     
-    def post_ordenR(self):
-        self.post_orden(self.raiz)
-      
-    def post_orden(self, nodo):
-        if nodo is not None:
-            self.post_orden(nodo.get_hijo_izq())
-            self.post_orden(nodo.get_hijo_der())
-            print(nodo)
      
 class Pila: 
     def __init__(self):
@@ -123,13 +92,14 @@ class Calculadora:
             else:
                 i+= 1
         return True
-
+    
     def validar_tokens(self, expresion): 
         tokens = expresion.split()
         for token in tokens:
             if(not self.es_operador(token) and not self.es_operando(token) and not token in ["(", ")"]):
                 return False
         return True
+            
     
     def validar_parentesis(self, expresion): 
         pila = Pila()
@@ -170,14 +140,14 @@ class Calculadora:
 
     def evaluar_expresion(self, expresion): 
         if(not self.validar_tokens(expresion) or not self.validar_operadores(expresion) or not self.validar_parentesis(expresion)):
-            return "syntax ERROR" 
+            return "Syntax ERROR"
         pila_a = Pila()
         pila_b = Pila()
         tokens = expresion.split()
         while len(tokens) > 0:
             token = tokens.pop(0)
             if self.es_operando(token):
-                pila_b.push(Arbol_de_expresion(float(token), None, None))
+                pila_b.push(Arbol_de_expresion(float(token)))
             elif token == "(" :
                 pila_a.push(token)
             elif token == ")" :
@@ -195,7 +165,7 @@ class Calculadora:
         if(not pila_b.is_empty()):
             arbol = pila_b.pop()
         else:
-            arbol = Arbol_de_expresion(0, None, None)
+            arbol = Arbol_de_expresion(0)
             
         return self.calcula(arbol)
         #print(arbol.get_arbol_izq().get_arbol_izq().get_arbol_der().get_raiz().get_dato())
