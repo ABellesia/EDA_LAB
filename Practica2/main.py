@@ -1,15 +1,9 @@
-"""
-Created on Wed Oct 20 19:36:17 2021
-
-@author: Diego Arellano
-"""
 
 class Nodo:
     def __init__(self, dato=None):
         self.dato = dato
         self.hijo_der = None
         self.hijo_izq = None
-        self.papa = None
 
     def set_hijo_der(self, dato):
         self.hijo_der = Nodo(dato)
@@ -19,12 +13,6 @@ class Nodo:
 
     def get_dato(self):
         return self.dato
-
-    def get_papa(self):
-        return self.papa
-
-    def set_papa(self, papa):
-        self.papa = papa
 
     def get_hijo_der(self):
         return self.hijo_der
