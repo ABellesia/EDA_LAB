@@ -1,20 +1,20 @@
-public class NodoHash<T> {
-    private T dato;
-    private NodoHash<T> sig;
+public class NodoHash {
+    private Film dato;
+    private NodoHash sig;
     
-    NodoHash(T dato) {
+    NodoHash(Film dato) {
         this.dato = dato;
     }
 
-    public void setSig(NodoHash<T> sig) {
+    public void setSig(NodoHash sig) {
         this.sig = sig;
     }
 
-    public T getDato() {
+    public Film getDato() {
         return dato;
     }
 
-    public NodoHash<T> getSig() {
+    public NodoHash getSig() {
         return sig;
     }
     

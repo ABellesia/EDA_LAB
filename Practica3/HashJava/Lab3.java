@@ -27,7 +27,19 @@ public class Lab3 {
         } catch(Exception e) {
             System.out.println("Archivo no encontrado");
         }
-        System.out.println(lista.get(1001).toString());
+        //System.out.println(lista.get(1001).toString());
+        HashTable hashy = new HashTable(5);
+        
+        for(int i = 0; i < lista.size(); i++) {
+            hashy.insertar((Film) lista.get(i));
+        }
+        
+
+        System.out.println(hashy.toString());
+
+        long startTime = System.nanoTime();
+        //Operacion
+        long endTime = System.nanoTime();
+        System.out.println("El tiempo de ejecución en nanosegundos de la operación: " + (endTime-startTime));
     }
-    
 }

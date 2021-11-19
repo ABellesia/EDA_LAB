@@ -1,4 +1,6 @@
 import numpy as np
+import csv
+
 class Nodo_Hash:
 	def __init__(self, dato = None):
 		self.dato = dato
@@ -14,13 +16,13 @@ class Nodo_Hash:
 		self.siguiente = nodo
 
 class Tabla_Hash:
-	def __init__(self):
+	def __init__(self, m):
 		self.cont = 0
-		self.arre = np.array()
+		self.m = m  
+		self.arre = np.array([None for i in range(m)])
 		self.arre[0] = None
 		self.factor_carga = 0.8
 
-	
 
 	def inserta(self, dato):
 		nodo = Nodo_Hash(dato)
@@ -41,4 +43,27 @@ class Tabla_Hash:
 			return actual
 		return None
 
-	
+class Film:
+    
+    def __init__(self, title, date, rate):
+        self.title = title
+        self.date = date
+        self.rate = rate
+    def __str__(self):
+        return self.title
+
+
+list = []
+
+with open('imdb.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter = ',')
+        line_count=0
+        for row in csv_reader:
+            if line_count != 0:
+                list.append(Film(row[0],row[1],row[2]))
+            line_count += 1
+
+for x in range(len(list)):
+    print(list[x])
+print(len(list))	
+

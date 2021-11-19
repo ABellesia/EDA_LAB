@@ -1,20 +1,28 @@
+
+/**
+ *
+ * @author Diego Arellano
+ */
 public class HashTable <T>{
     private NodoHash[] arreglo;
     private int cont;
     private double factorCarga = 0.8;
+    private int m;
     
-    public HashTable() {
+    public HashTable(int m) {
         cont = 0;
-        arreglo = new NodoHash[1];
-        arreglo[0] = new NodoHash(null); //centinela
+        arreglo = new NodoHash[m];
+        for(int i = 0; i < m; i++)
+            arreglo[i] = new NodoHash(null); //centinela
+        this.m = m;
     }
     
-    public void insertar(T elem) {
+    public void insertar(Film elem) {
         NodoHash nodo = new NodoHash(elem);
         cont++;
-        if((double)cont/arreglo.length > factorCarga)
-            expande();
-        int pos = elem.hashCode() % arreglo.length;
+//        if((double)cont/arreglo.length > factorCarga)
+//            expande();
+        int pos = Math.abs(elem.getTitle().hashCode() % m);
         NodoHash sig = arreglo[pos].getSig();
         arreglo[pos].setSig(nodo);
         nodo.setSig(sig);
@@ -38,17 +46,17 @@ public class HashTable <T>{
         arreglo = arregloNuevo;
     }
     
-    public NodoHash find(T elem) {
-        int pos = elem.hashCode() % arreglo.length;
+    public NodoHash find(String elem) {
+        int pos = Math.abs(elem.hashCode() % m);
         NodoHash actual = arreglo[pos];
-        while(actual.getSig() != null && !actual.getSig().getDato().equals(elem))
+        while(actual.getSig() != null && !actual.getSig().getDato().getTitle().equals(elem))
             actual = actual.getSig();
-        if(actual.getSig() != null && actual.getSig().getDato().equals(elem))
+        if(actual.getSig() != null && actual.getSig().getDato().getTitle().equals(elem))
             return actual;
         return null;
     }
     
-    public NodoHash<T> eliminar(T elem) {
+    public NodoHash eliminar(String elem) {
         NodoHash ant = find(elem);
         if(ant == null)
             return null;
@@ -68,11 +76,15 @@ public class HashTable <T>{
                 if(actual.getDato() == null)
                     cad.append("c" + " ");
                 else
-                    cad.append(actual.getDato() + " ");
+                    cad.append(actual.getDato() + ", ");
                 actual = actual.getSig();
             }
             cad.append("\n");
         }
         return cad.toString();
-    }    
+    }
+
+    public int getCont() {
+        return cont;
+    }
 }
