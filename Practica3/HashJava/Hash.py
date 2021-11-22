@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov 22 12:49:39 2021
+
+@author: mny_1026
+"""
+import csv
 class Film:
     def __init__(self, title, date, rate):
         self.title = title
@@ -11,8 +19,11 @@ class Film:
 class NodoHash:
     def __init__(self, dato):
         self.dato = dato
+        self.sig = None
+
     def set_Sig(self, sig):
         self.sig = sig
+
     def get_Dato(self):
         return self.dato
     def get_sig(self):
@@ -28,7 +39,7 @@ class HashTable:
     def insertar(self, elem):
         nodo = NodoHash(elem)
         self.cont += 1
-        pos = abs(elem.get_Title().hash % self.m)
+        pos = abs(hash(elem.get_Title()) % self.m)
         sig = self.arreglo[pos].get_sig()
         self.arreglo[pos].set_Sig(nodo)
         nodo.set_Sig(sig)
@@ -50,7 +61,7 @@ class HashTable:
         self.arreglo = arregloNuevo
         
     def find(self, elem):
-         pos = abs(elem.get_Title().hash % self.m)
+         pos = abs(hash(elem.get_Title()) % self.m)
          actual = self.arreglo[pos]
          while actual.get_sig() != None and actual.get_sig().get_Dato().get_Title != elem:
              actual = actual.get_sig()
@@ -78,7 +89,7 @@ class HashTable:
                 if actual.get_Dato() == None:
                     cad = cad + "c "
                 else: 
-                    cad = cad + actual.get_Dato()+","
+                    cad = cad + actual.get_Dato().get_Title() +","
                 actual = actual.get_sig()
             cad = cad + "\n"
         return cad
@@ -88,16 +99,16 @@ class HashTable:
     
     
     
-lista = []
-file = open("imbd.csv", "r")
-contenido = file.read()
-aux = contenido.split('\n')
-for i in contenido:
-    aux2 = i.split(',')
-    lista.append(Film(aux2[0], aux2[1], aux2[2]))
+list = []
+
+with open('imdb.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter = ',')
+        line_count=0
+        for row in csv_reader:
+            if line_count != 0:
+                list.append(Film(row[0],row[1],row[2]))
+            line_count += 1
 hashy = HashTable(5)
-for i in range(len(lista)):
-    hashy.insertar(lista[i])
+for x in range(len(list)):
+    hashy.insertar(list[x])
 print(hashy.to_String())
-
-
