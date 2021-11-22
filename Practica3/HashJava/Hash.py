@@ -1,69 +1,103 @@
-import numpy as np
-import csv
-
-class Nodo_Hash:
-	def __init__(self, dato = None):
-		self.dato = dato
-		self.siguiente
-	
-	def get_dato(self):
-		return self.dato
-	
-	def get_siguiente(self):
-		return self.siguiente
-
-	def set_siguiente(self, nodo):
-		self.siguiente = nodo
-
-class Tabla_Hash:
-	def __init__(self, m):
-		self.cont = 0
-		self.m = m  
-		self.arre = np.array([None for i in range(m)])
-		self.arre[0] = None
-		self.factor_carga = 0.8
-
-
-	def inserta(self, dato):
-		nodo = Nodo_Hash(dato)
-		self.cont += 1
-		if (self.cont/len(self.arre)) > self.factor_carga:
-			self.expande()
-		pos = dato.hashCode() % len(self.arre)
-		sig = self.arre[pos].get_siguiente()
-		self.arre[sig].set_siguiente(nodo)
-		nodo.set_siguiente(sig)
-
-	def find(self, elem):
-		pos = elem.hashCode() % len(self.arre)
-		actual = self.arre[pos]
-		while (actual.get_siguiente() != None and actual.get_siguiete().get_dato() == elem):
-			actual = actual.get_siguiente()
-		if (actual.get_siguiente() != None and actual.get_siguiete().get_dato() == elem):
-			return actual
-		return None
-
 class Film:
-    
     def __init__(self, title, date, rate):
         self.title = title
-        self.date = date
+        self.date = date 
         self.rate = rate
-    def __str__(self):
+    def to_String(self):
+        return "Film{"+"title= "+self.title+", date= "+self.date+", rate="+self.rate+"}"
+    def get_Title(self):
         return self.title
+    
+class NodoHash:
+    def __init__(self, dato):
+        self.dato = dato
+    def set_Sig(self, sig):
+        self.sig = sig
+    def get_Dato(self):
+        return self.dato
+    def get_sig(self):
+        return self.sig
+    
+class HashTable:
+    def __init__(self, m):
+        self.cont = 0
+        self.arreglo = []
+        for i in range(0,m):
+            self.arreglo.append(NodoHash(None))
+        self.m = m
+    def insertar(self, elem):
+        nodo = NodoHash(elem)
+        self.cont += 1
+        pos = abs(elem.get_Title().hash % self.m)
+        sig = self.arreglo[pos].get_sig()
+        self.arreglo[pos].set_Sig(nodo)
+        nodo.set_Sig(sig)
+        
+    def expande(self):
+        arregloNuevo = []
+        n = len(self.arreglo)*2
+        for i in range(0,n):
+            arregloNuevo.append(NodoHash(None))
+        for i in range(0,len(self.arreglo)):
+            actual = self.arreglo[i].get_sig()
+            while actual != None:
+                pos = actual.get_Dato().hash % len(arregloNuevo)
+                nuevo = NodoHash(actual.get_Dato())
+                sig = arregloNuevo[pos].get_sig()
+                arregloNuevo[pos].set_Sig(nuevo)
+                nuevo.set_Sig(sig)
+                actual = actual.get_sig()
+        self.arreglo = arregloNuevo
+        
+    def find(self, elem):
+         pos = abs(elem.get_Title().hash % self.m)
+         actual = self.arreglo[pos]
+         while actual.get_sig() != None and actual.get_sig().get_Dato().get_Title != elem:
+             actual = actual.get_sig()
+         if actual.get_sig() != None and actual.get_sig().get_Dato().get_Title == elem:
+             return actual
+         else:
+             return None 
+         
+    def eliminar(self, elem):
+        ant = self.find(elem)
+        if ant == None:
+            return None
+        self.cont -= 1
+        target = ant.get_sig()
+        sig = target.get_sig()
+        target.set_Sig(None)
+        ant.set_Sig(sig)
+        return target
+    
+    def to_String(self):
+        cad = ""
+        for i in range(0,len(self.arreglo)):
+            actual = self.arreglo[i]
+            while actual != None: 
+                if actual.get_Dato() == None:
+                    cad = cad + "c "
+                else: 
+                    cad = cad + actual.get_Dato()+","
+                actual = actual.get_sig()
+            cad = cad + "\n"
+        return cad
+    
+    def get_cont(self):
+        return self.cont
+    
+    
+    
+lista = []
+file = open("imbd.csv", "r")
+contenido = file.read()
+aux = contenido.split('\n')
+for i in contenido:
+    aux2 = i.split(',')
+    lista.append(Film(aux2[0], aux2[1], aux2[2]))
+hashy = HashTable(5)
+for i in range(len(lista)):
+    hashy.insertar(lista[i])
+print(hashy.to_String())
 
-
-list = []
-
-with open('imdb.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter = ',')
-        line_count=0
-        for row in csv_reader:
-            if line_count != 0:
-                list.append(Film(row[0],row[1],row[2]))
-            line_count += 1
-
-for x in range(len(list)):
-    print(list[x])
-print(len(list))	
 
